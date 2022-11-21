@@ -5,19 +5,18 @@
 
 class MoveManager {
 
-
 private:
-    
-
 	MoveManager() {
 		std::cout << "MoveManager constructor called" << std::endl;
-		//this->board = Board::GetBoardInstance();
 	}
-
-
 	
 public:
-	
+	void test() {
+		std::cout << "MoveManager test called" << std::endl;
+	}
+
+	void testCpp();
+
 	static MoveManager * moveManagerInstance;
 
 	MoveManager(MoveManager &other) = delete;
@@ -29,12 +28,12 @@ public:
 
 	static MoveManager * GetMoveManagerInstance() {
 		if (moveManagerInstance == nullptr) {
-			// moveManagerInstance = new MoveManager();
-			return nullptr;
+			std::cout << "MoveManager instance dont exists" << std::endl;
+			moveManagerInstance = new MoveManager();
 		} else {
-		// 	std::cout << "MoveManager instance already exists" << std::endl;
-			return nullptr;
+			std::cout << "MoveManager instance already exists" << std::endl;
 		}
+		return moveManagerInstance;
 	}
 
 	int * validMovements(int from);
@@ -53,4 +52,3 @@ public:
 	
 };
 
-MoveManager * MoveManager::moveManagerInstance = nullptr;

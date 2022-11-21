@@ -6,10 +6,14 @@
 int main() {
     Board* board = new Board();// = Board::GetBoardInstance();
     board->setTiles();
-    board->printBoard();
 
+    
     MoveManager * moveManager = MoveManager::GetMoveManagerInstance();
-    // int * moves = moveManager->validPawnMovements(8);
-    std::cout << "Hello World!\n";
+    moveManager->testCpp();
+
+    //int * moves = moveManager->validPawnMovements(8);
+
+
+    // std::cout << moveManager->test() << std::endl;
     return 0;
 }

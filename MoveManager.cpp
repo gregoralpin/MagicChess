@@ -3,8 +3,9 @@
 #include "Board.h"
 #include "Piece.h"
 
-static MoveManager * moveManagerInstance = nullptr;
-
+void MoveManager::testCpp() {
+	std::cout << "testCpp called" << std::endl;
+}
 
 int * MoveManager::validMovements(int from) {
 	
@@ -120,3 +121,4 @@ int * MoveManager::validPawnMovements(int from) {
 	return nullptr;
 }
 
+MoveManager * MoveManager::moveManagerInstance = nullptr;

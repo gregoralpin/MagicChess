@@ -14,7 +14,9 @@ Tile::Tile(int x, int y, Piece* piece) {
 
 int* Tile::getCoordinates()
 {
-	int coord[2] = { this->x, this->y };
+	int * coord = (int *)malloc(2 * sizeof(int));
+    coord[0] = this->x;
+    coord[1] = this->y;
 	return coord;
 }
 
