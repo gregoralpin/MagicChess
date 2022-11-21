@@ -10,7 +10,7 @@ int main() {
     
     MoveManager * moveManager = MoveManager::GetMoveManagerInstance();
 
-    int * moves = moveManager->validMovements(8);
+    int * moves = moveManager->validMovements(24);
     
 
     // std::cout << moveManager->test() << std::endl;
