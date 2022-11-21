@@ -30,6 +30,7 @@ public:
 		if (moveManagerInstance == nullptr) {
 			std::cout << "MoveManager instance dont exists" << std::endl;
 			moveManagerInstance = new MoveManager();
+			moveManagerInstance->board = Board::GetBoardInstance();
 		} else {
 			std::cout << "MoveManager instance already exists" << std::endl;
 		}

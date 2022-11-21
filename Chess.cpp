@@ -4,15 +4,14 @@
 #include "Piece.h"
 
 int main() {
-    Board* board = new Board();// = Board::GetBoardInstance();
+    Board* board = Board::GetBoardInstance();
     board->setTiles();
-
+    board->printBoard();
     
     MoveManager * moveManager = MoveManager::GetMoveManagerInstance();
-    moveManager->testCpp();
 
-    //int * moves = moveManager->validPawnMovements(8);
-
+    int * moves = moveManager->validPawnMovements(14);
+    
 
     // std::cout << moveManager->test() << std::endl;
     return 0;

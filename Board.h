@@ -15,13 +15,14 @@ public:
 	void movePiece(int from, int to);
 	
 	Board() {
-		//boardInstance = (this);
+		std::cout << "Board constructor called" << std::endl;
+		setTiles();
 	};
 
 	static Board * GetBoardInstance() {
-		static Board * instance = new Board();
 		if (boardInstance == nullptr) {
 			boardInstance = new Board();
+			boardInstance->setTiles();
 		}
 		return boardInstance;
 	};

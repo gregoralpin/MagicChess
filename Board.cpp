@@ -1,20 +1,10 @@
 #pragma GCC diagnostic ignored "-Wc++11-extensions"
 
-
 #include<iostream>
 #include "Board.h"
 
-static Board * GetBoardInstance() {
-    Board * instance = Board::boardInstance;
-    if (instance == nullptr) {
-        instance = new Board();
-        Board::boardInstance = instance;
-    }
-    instance->setTiles();
-    return instance;
-}
-
 void Board::setTiles() {
+
     for (int i = 0; i < 64; i++) {
         if (i%8 == 0) {
             if (i/8 == 0 || i/8 == 7) {
@@ -54,3 +44,5 @@ void Board::movePiece(int from, int to) {
     tiles[to]->setOccupiedBy(tiles[from]->getOccupiedBy());
     tiles[from]->setOccupiedBy(nullptr);
 }
+
+Board* Board::boardInstance = nullptr;
