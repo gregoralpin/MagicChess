@@ -49,11 +49,16 @@ Board* Board::boardInstance = nullptr;
 
 void Board::mockRookBoard() {
     for (int i = 0; i < 63; i++) {
-        tiles[i] = new Tile(i%8, i/8);
+        tiles[i] = new Tile(i/8, i%8);
     }
 
     tiles[0] = new Tile(0, 0, new Piece(PieceType::ROOK, Color::WHITE));
+    tiles[2] = new Tile(0, 2, new Piece(PieceType::ROOK, Color::WHITE));
     tiles[7] = new Tile(0, 7, new Piece(PieceType::PAWN, Color::BLACK));
+    tiles[8] = new Tile(1, 0, new Piece(PieceType::KNIGHT, Color::WHITE));
+    tiles[15] = new Tile(1, 7, new Piece(PieceType::KNIGHT, Color::BLACK));
+    tiles[48] = new Tile(6, 0, new Piece(PieceType::KNIGHT, Color::WHITE));
+    tiles[55] = new Tile(6, 7, new Piece(PieceType::KNIGHT, Color::BLACK));
     tiles[56] = new Tile(7, 0, new Piece(PieceType::PAWN, Color::WHITE));
     tiles[63] = new Tile(7,7, new Piece(PieceType::ROOK, Color::BLACK));
 
