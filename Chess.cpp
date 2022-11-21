@@ -5,12 +5,12 @@
 
 int main() {
     Board* board = Board::GetBoardInstance();
-    board->setTiles();
+    board->mockRookBoard();
     board->printBoard();
     
     MoveManager * moveManager = MoveManager::GetMoveManagerInstance();
 
-    int * moves = moveManager->validPawnMovements(14);
+    int * moves = moveManager->validMovements(63);
     
 
     // std::cout << moveManager->test() << std::endl;

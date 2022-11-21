@@ -31,6 +31,8 @@ public:
 			std::cout << "MoveManager instance dont exists" << std::endl;
 			moveManagerInstance = new MoveManager();
 			moveManagerInstance->board = Board::GetBoardInstance();
+			std::cout << "Board Added" << std::endl;
+
 		} else {
 			std::cout << "MoveManager instance already exists" << std::endl;
 		}

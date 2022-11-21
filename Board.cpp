@@ -46,3 +46,15 @@ void Board::movePiece(int from, int to) {
 }
 
 Board* Board::boardInstance = nullptr;
+
+void Board::mockRookBoard() {
+    for (int i = 0; i < 63; i++) {
+        tiles[i] = new Tile(i%8, i/8);
+    }
+
+    tiles[0] = new Tile(0, 0, new Piece(PieceType::ROOK, Color::WHITE));
+    tiles[7] = new Tile(0, 7, new Piece(PieceType::PAWN, Color::BLACK));
+    tiles[56] = new Tile(7, 0, new Piece(PieceType::PAWN, Color::WHITE));
+    tiles[63] = new Tile(7,7, new Piece(PieceType::ROOK, Color::BLACK));
+
+}

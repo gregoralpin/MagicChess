@@ -11,6 +11,10 @@ int * MoveManager::validMovements(int from) {
 	int from_y = from / 8;
 
 	Piece * piece = this->board->tiles[from]->getOccupiedBy();
+	if (piece == nullptr) {
+		std::cout << "No piece at this position" << std::endl;
+		return nullptr;
+	}
 	Color color = piece->getColor();
 
 	switch (piece->getType()) {
@@ -38,8 +42,95 @@ int * MoveManager::validMovements(int from) {
 }
 
 int * MoveManager::validRookMovements(int from) {
+	std::cout << "Rook" << std::endl;
+	int from_x = from % 8;
+	int from_y = from / 8;
 
-	return nullptr;
+	std::cout << from_x << std::endl;
+	std::cout << from_y << std::endl;
+
+	int * validIndexes = new int[14];
+
+	Board * board = this->board;
+
+	Piece * piece = this->board->tiles[from]->getOccupiedBy();
+	Color color = piece->getColor();
+
+	int auxX = from_x;
+	int auxY = from_y;
+
+	int i = 0;
+	int currentIndex = auxX*8 + auxY;
+	while (auxX < 7) {
+		auxX++;
+		currentIndex = auxX*8 + auxY;
+		if (board->tiles[currentIndex]->getOccupiedBy() == nullptr) {
+			validIndexes[i] = currentIndex;
+		} else if (board->tiles[currentIndex]->getOccupiedBy()->getColor() != color) {
+			validIndexes[i] = currentIndex;
+			break;
+		} else {
+			break;
+		}
+		i++;
+	}
+
+	auxX = from_x;
+
+	while (auxX > 0) {
+		auxX--;
+		currentIndex = auxX*8 + auxY;
+		if (board->tiles[currentIndex]->getOccupiedBy() == nullptr) {
+			validIndexes[i] = currentIndex;
+		} else if (board->tiles[currentIndex]->getOccupiedBy()->getColor() != color) {
+			validIndexes[i] = currentIndex;
+			i++;
+			break;
+		} else {
+			break;
+		}
+		i++;
+	}
+
+	auxX = from_x;
+
+	while (auxY < 7) {
+		auxY++;
+		currentIndex = auxX*8 + auxY;
+		if (board->tiles[currentIndex]->getOccupiedBy() == nullptr) {
+			validIndexes[i] = currentIndex;
+		} else if (board->tiles[currentIndex]->getOccupiedBy()->getColor() != color) {
+			std::cout << "Enemy piece" << std::endl;
+			validIndexes[i] = currentIndex;
+			i++;
+			break;
+		} else {
+			break;
+		}
+		i++;
+	}
+
+	auxY = from_y;
+
+	while (auxY > 0) {
+		auxY--;
+		currentIndex = auxX*8 + auxY;
+		if (board->tiles[currentIndex]->getOccupiedBy() == nullptr) {
+			validIndexes[i] = currentIndex;
+		} else if (board->tiles[currentIndex]->getOccupiedBy()->getColor() != color) {
+			validIndexes[i] = currentIndex;
+			break;
+		} else {
+			break;
+		}
+		i++;
+	}
+
+	std::cout << "Valid indexes: " << std::endl;
+	for (int j = 0; j < i; j++) {
+		std::cout << validIndexes[j] << std::endl;
+	}
+	return validIndexes;
 }
 
 int * MoveManager::validKnightMovements(int from) {

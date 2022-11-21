@@ -32,4 +32,7 @@ public:
 			tiles[i]->printTile();
 		}
 	}
+
+	void mockRookBoard();
+
 };
