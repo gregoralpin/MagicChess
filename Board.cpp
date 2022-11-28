@@ -41,6 +41,21 @@ void Board::setTiles() {
 }
 
 void Board::movePiece(int from, int to) {
+
+    int from_x = from / 8;
+    int from_y = from % 8;
+
+    if (tiles[from]->getOccupiedBy() == nullptr) {
+        return;
+    } else if (tiles[from]->getOccupiedBy()->getType() == PieceType::PAWN) {
+        if (tiles[from]->getOccupiedBy()->getColor() == Color::WHITE && from_y == 6) {
+            tiles[from]->getOccupiedBy()->upgrade(PieceType::QUEEN);
+        } else if (tiles[from]->getOccupiedBy()->getColor() == Color::BLACK && from_y == 1){
+            tiles[from]->getOccupiedBy()->upgrade(PieceType::QUEEN);
+        }        
+    }
+
+
     tiles[to]->setOccupiedBy(tiles[from]->getOccupiedBy());
     tiles[from]->setOccupiedBy(nullptr);
 }
@@ -48,11 +63,19 @@ void Board::movePiece(int from, int to) {
 Board* Board::boardInstance = nullptr;
 
 void Board::mockRookBoard() {
-    for (int i = 0; i < 63; i++) {
+    for (int i = 0; i < 64; i++) {
         tiles[i] = new Tile(i/8, i%8);
     }
 
     tiles[54] = new Tile(0, 7, new Piece(PieceType::PAWN, Color::WHITE));
     tiles[63] = new Tile(7,6, new Piece(PieceType::KING, Color::BLACK));
+}
 
+void Board::mockUpgradePawnBoard() {
+    for (int i = 0; i < 64; i++) {
+        tiles[i] = new Tile(i/8, i%8);
+    }
+
+    tiles[6] = new Tile(0, 6, new Piece(PieceType::PAWN, Color::WHITE));
+    tiles[57] = new Tile(7,1, new Piece(PieceType::PAWN, Color::BLACK));
 }

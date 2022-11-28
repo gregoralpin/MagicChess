@@ -5,15 +5,15 @@
 
 int main() {
     Board* board = Board::GetBoardInstance();
-    board->mockRookBoard();
+    board->mockUpgradePawnBoard();
     board->printBoard();
     
     MoveManager * moveManager = MoveManager::GetMoveManagerInstance();
 
-    int * moves = moveManager->validMovements(24);
+    board->movePiece(6,7);
+    board->movePiece(57,56);
+    board->printBoard();
 
-    bool isCheck = moveManager->lookForCheck(Color::WHITE);
-
-    std::cout << "Is Check: " << isCheck << std::endl;
+    // std::cout << "Is Check: " << isCheck << std::endl;
     return 0;
 }
