@@ -17,28 +17,41 @@ int * MoveManager::validMovements(int from) {
 	}
 	Color color = piece->getColor();
 
+	int * movements = new int[64];
+
 	switch (piece->getType()) {
 	case PieceType::PAWN:
-		return validPawnMovements(from);
+		movements = validPawnMovements(from);
 	case PieceType::ROOK:
 		/* code */
-		return validRookMovements(from);	
+		movements = validRookMovements(from);	
 	case PieceType::KNIGHT:
 		/* code */
-		return validKnightMovements(from);	
+		movements = validKnightMovements(from);	
 	case PieceType::BISHOP:
 		/* code */
-		return validBishopMovements(from);	
+		movements = validBishopMovements(from);	
 	case PieceType::QUEEN:
 		/* code */
-		return validQueenMovements(from);	
+		movements = validQueenMovements(from);	
 	case PieceType::KING:
 		/* code */
-		return validKingMovements(from);	
-	
+		movements = validKingMovements(from);	
 	default:
 		return nullptr;
 	}
+
+	for (int j = 0; j < 64; j++) {
+		int movement = movements[j];
+		std::cout << movement << std::endl;
+		board->movePiece(from, movement);
+		if (this->lookForCheck(color)) {
+			movements[j] = -1;
+		}
+		board->movePiece(movement, from);
+	}
+
+	return movements;
 }
 
 int * MoveManager::validRookMovements(int from) {
@@ -128,6 +141,12 @@ int * MoveManager::validRookMovements(int from) {
 			break;
 		}
 		i++;
+	}
+
+
+	for (int j = 0; j < i; j++) {
+		currentIndex = validIndexes[j];
+		std::cout << currentIndex << std::endl;
 	}
 
 	std::cout << "Valid indexes: " << std::endl;
@@ -519,8 +538,20 @@ int * MoveManager::validPawnMovements(int from) {
 	return validIndexes;
 }
 
-bool MoveManager::lookForCheck(int kingPosition) {
+bool MoveManager::lookForCheck(Color color) {
 	
+	int kingPosition;
+	
+	for (int j = 0; j<64; j++) {
+		if (board->tiles[j]->getOccupiedBy() != nullptr) {
+			if (board->tiles[j]->getOccupiedBy()->getType() == PieceType::KING) {
+				if (board->tiles[j]->getOccupiedBy()->getColor() == color) {
+					kingPosition = j;
+				}
+			}
+		}
+	}
+
 	int x = kingPosition / 8;
 	int y = kingPosition % 8;
 

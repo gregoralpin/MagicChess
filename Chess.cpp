@@ -12,7 +12,7 @@ int main() {
 
     int * moves = moveManager->validMovements(24);
 
-    bool isCheck = moveManager->lookForCheck(63);
+    bool isCheck = moveManager->lookForCheck(Color::WHITE);
 
     std::cout << "Is Check: " << isCheck << std::endl;
     return 0;

@@ -53,5 +53,5 @@ public:
 
     int * validKingMovements(int from);
 	
+	bool lookForCheck(Color color);
 };
-
