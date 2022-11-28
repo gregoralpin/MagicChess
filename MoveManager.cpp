@@ -456,7 +456,98 @@ int * MoveManager::validQueenMovements(int from) {
 }
 
 int * MoveManager::validKingMovements(int from) {
-	return nullptr;
+
+	if (this->board->tiles[from]->getOccupiedBy() == nullptr) {
+		return nullptr;
+	}
+
+	Color color = this->board->tiles[from]->getOccupiedBy()->getColor();
+
+	int from_x = from / 8;
+	int from_y = from % 8;
+
+	int validIndexes[8] = {-1, -1, -1, -1,-1, -1, -1,-1};
+
+	int i = 0;
+
+	if (from_x + 1 < 8) {
+		int currentIndex = (from_x + 1)*8 + (from_y);
+		if (this->board->tiles[currentIndex]->getOccupiedBy() == nullptr) {
+			validIndexes[i] = currentIndex;
+			i++;
+		} else if (this->board->tiles[currentIndex]->getOccupiedBy()->getColor() != color) {
+			validIndexes[i] = currentIndex;
+			i++;
+		}
+	} else if (from_x - 1 >= 0) {
+		int currentIndex = (from_x - 1)*8 + (from_y);
+		if (this->board->tiles[currentIndex]->getOccupiedBy() == nullptr) {
+			validIndexes[i] = currentIndex;
+			i++;
+		} else if (this->board->tiles[currentIndex]->getOccupiedBy()->getColor() != color) {
+			validIndexes[i] = currentIndex;
+			i++;
+		}
+	}
+
+	if (from_y + 1 < 8) {
+		int currentIndex = (from_x)*8 + (from_y + 1);
+		if (this->board->tiles[currentIndex]->getOccupiedBy() == nullptr) {
+			validIndexes[i] = currentIndex;
+			i++;
+		} else if (this->board->tiles[currentIndex]->getOccupiedBy()->getColor() != color) {
+			validIndexes[i] = currentIndex;
+			i++;
+		}
+	} else if (from_y - 1 >= 0) {
+		int currentIndex = (from_x)*8 + (from_y - 1);
+		if (this->board->tiles[currentIndex]->getOccupiedBy() == nullptr) {
+			validIndexes[i] = currentIndex;
+			i++;
+		} else if (this->board->tiles[currentIndex]->getOccupiedBy()->getColor() != color) {
+			validIndexes[i] = currentIndex;
+			i++;
+		}
+	}
+
+	if (from_x + 1 < 8 && from_y + 1 < 8) {
+		int currentIndex = (from_x + 1)*8 + (from_y + 1);
+		if (this->board->tiles[currentIndex]->getOccupiedBy() == nullptr) {
+			validIndexes[i] = currentIndex;
+			i++;
+		} else if (this->board->tiles[currentIndex]->getOccupiedBy()->getColor() != color) {
+			validIndexes[i] = currentIndex;
+			i++;
+		}
+	} else if (from_x + 1 < 8 && from_y - 1 >= 0) {
+		int currentIndex = (from_x + 1)*8 + (from_y - 1);
+		if (this->board->tiles[currentIndex]->getOccupiedBy() == nullptr) {
+			validIndexes[i] = currentIndex;
+			i++;
+		} else if (this->board->tiles[currentIndex]->getOccupiedBy()->getColor() != color) {
+			validIndexes[i] = currentIndex;
+			i++;
+		}
+	} else if (from_x - 1 >= 0 && from_y + 1 < 8) {
+		int currentIndex = (from_x - 1)*8 + (from_y + 1);
+		if (this->board->tiles[currentIndex]->getOccupiedBy() == nullptr) {
+			validIndexes[i] = currentIndex;
+			i++;
+		} else if (this->board->tiles[currentIndex]->getOccupiedBy()->getColor() != color) {
+			validIndexes[i] = currentIndex;
+			i++;
+		}
+	} else if (from_x - 1 >= 0 && from_y - 1 >= 0) {
+		int currentIndex = (from_x - 1)*8 + (from_y - 1);
+		if (this->board->tiles[currentIndex]->getOccupiedBy() == nullptr) {
+			validIndexes[i] = currentIndex;
+			i++;
+		} else if (this->board->tiles[currentIndex]->getOccupiedBy()->getColor() != color) {
+			validIndexes[i] = currentIndex;
+			i++;
+		}
+	} 
+	return validIndexes;
 }
 
 int * MoveManager::validPawnMovements(int from) {
