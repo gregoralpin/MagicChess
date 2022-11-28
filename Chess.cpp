@@ -11,8 +11,9 @@ int main() {
     MoveManager * moveManager = MoveManager::GetMoveManagerInstance();
 
     int * moves = moveManager->validMovements(24);
-    
 
-    // std::cout << moveManager->test() << std::endl;
+    bool isCheck = moveManager->lookForCheck(63);
+
+    std::cout << "Is Check: " << isCheck << std::endl;
     return 0;
 }

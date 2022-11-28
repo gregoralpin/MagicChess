@@ -65,9 +65,12 @@ int * MoveManager::validRookMovements(int from) {
 		auxX++;
 		currentIndex = auxX*8 + auxY;
 		if (board->tiles[currentIndex]->getOccupiedBy() == nullptr) {
+			std::cout << "No piece at " << currentIndex << std::endl;
 			validIndexes[i] = currentIndex;
 		} else if (board->tiles[currentIndex]->getOccupiedBy()->getColor() != color) {
+			std::cout << "Enemy piece at " << currentIndex << std::endl;
 			validIndexes[i] = currentIndex;
+			i++;
 			break;
 		} else {
 			break;
@@ -119,6 +122,7 @@ int * MoveManager::validRookMovements(int from) {
 			validIndexes[i] = currentIndex;
 		} else if (board->tiles[currentIndex]->getOccupiedBy()->getColor() != color) {
 			validIndexes[i] = currentIndex;
+			i++;
 			break;
 		} else {
 			break;
@@ -513,6 +517,33 @@ int * MoveManager::validPawnMovements(int from) {
         std::cout << validIndexes[i] << std::endl;
     }
 	return validIndexes;
+}
+
+bool MoveManager::lookForCheck(int kingPosition) {
+	
+	int x = kingPosition / 8;
+	int y = kingPosition % 8;
+
+	if (this->board->tiles[kingPosition]->getOccupiedBy() == nullptr || this->board->tiles[kingPosition]->getOccupiedBy()->getType() != PieceType::KING) {
+		return false;
+	}
+	Color kingColor = this->board->tiles[kingPosition]->getOccupiedBy()->getColor();
+
+	int i = 0;
+
+	for (int j = 0; j < 64; j++) {
+		if (board->tiles[j]->getOccupiedBy() != nullptr) {
+			if (board->tiles[j]->getOccupiedBy()->getColor() != kingColor) {
+				int * movements = validMovements(j); 
+				for (int k = 0; k < 21; k++) {
+					if (movements[k] == kingPosition) {
+						return true;
+					}
+				}
+			}
+		}
+	}
+	return false;
 }
 
 MoveManager * MoveManager::moveManagerInstance = nullptr;
