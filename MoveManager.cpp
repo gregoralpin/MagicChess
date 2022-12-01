@@ -3,6 +3,10 @@
 #include "Board.h"
 #include "Piece.h"
 
+int * MoveManager::validMovements(int row, int column){
+  return MoveManager::validMovements(row * 8 + column);
+}
+
 int * MoveManager::validMovements(int from) {
 	
 	int from_x = from % 8;
