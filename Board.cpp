@@ -1,6 +1,5 @@
 #pragma GCC diagnostic ignored "-Wc++11-extensions"
 
-#include<iostream>
 #include "Board.h"
 
 void Board::setTiles() {

@@ -1,18 +1,17 @@
 #pragma once
 #include "Board.h"
 #include "Piece.h"
-#include <iostream>
 
 class MoveManager {
 
 private:
 	MoveManager() {
-		std::cout << "MoveManager constructor called" << std::endl;
+		//std::cout << "MoveManager constructor called" << std::endl;
 	}
 	
 public:
 	void test() {
-		std::cout << "MoveManager test called" << std::endl;
+		//std::cout << "MoveManager test called" << std::endl;
 	}
 
 	void testCpp();
@@ -28,13 +27,13 @@ public:
 
 	static MoveManager * GetMoveManagerInstance() {
 		if (moveManagerInstance == nullptr) {
-			std::cout << "MoveManager instance dont exists" << std::endl;
+			//std::cout << "MoveManager instance dont exists" << std::endl;
 			moveManagerInstance = new MoveManager();
 			moveManagerInstance->board = Board::GetBoardInstance();
-			std::cout << "Board Added" << std::endl;
+			//std::cout << "Board Added" << std::endl;
 
 		} else {
-			std::cout << "MoveManager instance already exists" << std::endl;
+			//std::cout << "MoveManager instance already exists" << std::endl;
 		}
 		return moveManagerInstance;
 	}

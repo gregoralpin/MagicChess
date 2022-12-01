@@ -1,4 +1,3 @@
-#include <iostream>
 #include "Piece.h"
 
 class Tile {
@@ -21,9 +20,9 @@ class Tile {
 
 		void printTile() {
 			if (occupiedBy == nullptr) {
-				std::cout << "Tile at " << x << ", " << y << " is empty" << std::endl;
+				//std::cout << "Tile at " << x << ", " << y << " is empty" << std::endl;
 			} else {
-				std::cout << "Tile at (" << x << ", " << y << ") is occupied by " << occupiedBy->getName() << std::endl;
+				//std::cout << "Tile at (" << x << ", " << y << ") is occupied by " << occupiedBy->getName() << std::endl;
 			}
 		}
 };

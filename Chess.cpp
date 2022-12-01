@@ -1,4 +1,3 @@
-#include <iostream>
 #include "Board.h"
 #include "MoveManager.h"
 #include "Piece.h"
