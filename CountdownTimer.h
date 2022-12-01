@@ -2,8 +2,8 @@
 
 /// <summary>
 /// Uma classe simples representando um Countdown Timer
-/// para controle de tempo dos jogadores. É um timer que
-/// começa em X segundos e vai decrementando até chegar em 0.
+/// para controle de tempo dos jogadores. ï¿½ um timer que
+/// comeï¿½a em X segundos e vai decrementando atï¿½ chegar em 0.
 /// </summary>
 class CountdownTimer {
 private:
@@ -11,8 +11,6 @@ private:
     long _startedAt;
     bool _isStarted;
     bool _isPaused;
-
-    long _getMillis();
 
 public:
     /// <summary>
@@ -28,8 +26,8 @@ public:
     long GetRemainingSeconds();
     
     /// <summary>
-    /// Obtem o tempo restante como uma string amigável.
+    /// Obtem o tempo restante como uma string amigï¿½vel.
     /// </summary>
     /// <returns>Uma string formatada "MM:SS" do tempo restante </returns>
-    std::string GetRemainingTime();
+    String GetRemainingTime();
 };
