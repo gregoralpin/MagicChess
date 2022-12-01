@@ -15,7 +15,7 @@ public:
 	void movePiece(int from, int to);
 	
 	Board() {
-		std::cout << "Board constructor called" << std::endl;
+		//std::cout << "Board constructor called" << std::endl;
 		setTiles();
 	};
 

@@ -1,5 +1,5 @@
 #pragma once
-#include<string>
+#include <Arduino.h>
 
 enum Color { 
 	BLACK = 0,
@@ -33,9 +33,9 @@ class Piece {
 
 		Piece(PieceType type, Color color);
 
-		std::string getName() {
+		String getName() {
 			PieceType pt = getType();
 			Color c = getColor();
-			return std::string("Piece of type ") + PieceTypeNames[pt] + std::string(" and color ") + ColorNames[c];
+			return String("Piece of type ") + PieceTypeNames[pt] + String(" and color ") + ColorNames[c];
 		}
 };
