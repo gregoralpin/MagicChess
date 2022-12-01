@@ -38,6 +38,8 @@ public:
 		return moveManagerInstance;
 	}
 
+  int * validMovements(int row, int column);
+
 	int * validMovements(int from);
 
 	int * validPawnMovements(int from);
