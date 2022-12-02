@@ -68,3 +68,16 @@ void ChessDisplay::show_select_piece_message(){
 void ChessDisplay::show_select_destination_message(){
   print_middle("Selecione o destino:");
 }
+
+void ChessDisplay::show_info(String message){
+  if(message.length() > 13){
+    Serial.println("Message too big to be written at position");
+    return;
+  }
+
+  display_message_at(message, 3, 1);
+}
+
+void ChessDisplay::clear_info(){
+  display_message_at("                   ", 0, 1);
+}

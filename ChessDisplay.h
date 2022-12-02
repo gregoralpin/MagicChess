@@ -17,4 +17,6 @@ class ChessDisplay : public LiquidCrystal
     void show_right_turn_indicator();
     void show_select_piece_message();
     void show_select_destination_message();
+    void show_info(String message);
+    void clear_info();
 };
