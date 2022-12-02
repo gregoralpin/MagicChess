@@ -1,6 +1,6 @@
-#include "ChessDisplay.h"
-
 #define LCD_COLUMNS 20
+#define LCD_ROWS 4
+#include "ChessDisplay.h"
 
 void ChessDisplay::display_message_at(String message, int column, int row){
   setCursor(column, row);
@@ -49,4 +49,22 @@ void ChessDisplay::print_bottom(String message){
 
 void ChessDisplay::clear_bottom(){
   display_message_at("                   ", 0, 3);
+}
+
+void ChessDisplay::show_left_turn_indicator(){
+  display_message_at(" ", 13, 0);
+  display_message_at("<", 6, 0);
+}
+
+void ChessDisplay::show_right_turn_indicator(){
+  display_message_at(" ", 6, 0);
+  display_message_at(">", 13, 0);
+}
+
+void ChessDisplay::show_select_piece_message(){
+  print_middle("Selecione uma peca:");
+}
+
+void ChessDisplay::show_select_destination_message(){
+  print_middle("Selecione o destino:");
 }
