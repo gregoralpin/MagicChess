@@ -32,7 +32,8 @@ GFButton *selectBtn = nullptr;
 CountdownTimer *TimerLeft = nullptr;
 CountdownTimer *TimerRight = nullptr;
 
-long previousSeconds;
+long lastTimerUpdateSeconds;
+long lastInfoClearSeconds;
 int selected_piece_position;
 int selected_destination_position;
 int col_pos;
@@ -48,17 +49,18 @@ void init_control(){
 
   row_encoder = new RotaryEncoder(2,3);
   column_encoder = new RotaryEncoder(20, 21);
-  lcd = new ChessDisplay(8, 9, 10, 11, 12, 13);// LiquidCrystal(rs,en,d4,d5,d6,d7);
+  lcd = new ChessDisplay(8, 9, 10, 11, 12, 13); // LiquidCrystal(rs,en,d4,d5,d6,d7);
   lcd->begin(20, 4);
   selectBtn = new GFButton(6);
   TimerLeft = new CountdownTimer(60 * 3);
   TimerRight = new CountdownTimer(60 * 3);
   
-  previousSeconds = millis();
-  selected_destination_position = 0; // [0..64]
-  selected_destination_position = 0; // [0..64]
-  col_pos = 0; // [0..8]
-  row_pos = 0; // [0..8]
+  lastTimerUpdateSeconds = millis();
+  lastInfoClearSeconds = millis();
+  selected_destination_position = 0; // [0..63]
+  selected_destination_position = 0; // [0..63]
+  col_pos = 0; // [0..7]
+  row_pos = 0; // [0..7]
 }
 
 /************************************/
@@ -144,11 +146,20 @@ void loop() {
     lcd->print_bottom(game_pos_to_row_pos(row_pos) + game_pos_to_column_pos(col_pos));
     
     // Print updated timer values.
-    if(millis() - previousSeconds > 1000){
+    if(millis() - lastTimerUpdateSeconds > 1000){
       lcd->print_top_left(String(TimerLeft->GetRemainingTime()));
       lcd->print_top_right(String(TimerRight->GetRemainingTime()));
 
-      previousSeconds = millis();
+      lastTimerUpdateSeconds = millis();
+    }
+
+    // Clear previous info.
+    if(millis() - lastInfoClearSeconds > 2000){
+      
+      
+      lcd->clear_info();
+
+      lastInfoClearSeconds = millis();
     }
   }
 
@@ -185,22 +196,30 @@ void loop() {
         Serial.println("Selected destination at row " + String(row_pos) + " column " + String(col_pos) + " - ie. index " + String(selected_destination_position));
         
         MoveManager* moveManager = MoveManager::GetMoveManagerInstance(); // this line should be outside of loop
-        int* validMoves = moveManager->validMovements(selected_piece_position);
+        int* validMoves = new int[64];
+        moveManager->validMovements(selected_piece_position, validMoves);
+
+        Serial.println("Got valid moves:");
+        for(int i = 0; i < 64; i++){
+          Serial.print(String(validMoves[i]) + ", ");
+        }
+        Serial.println();
         
         bool destinationValid = false;
-        for(int i = 0; i < 64; i++){
-          if (validMoves[i] == selected_destination_position){
-            destinationValid = true;
-            break;
-          }
-        }
-
-        if (destinationValid){
+        if(validMoves[selected_destination_position] != -1){
           Serial.println("Good move!");
           changePlayerTurn();
+          
+          lcd->clear_info();
+          lastInfoClearSeconds = millis();
+          lcd->show_info("Piece moved!");
         }
         else{
           Serial.println("Bad move...");
+          
+          lcd->clear_info();
+          lastInfoClearSeconds = millis();
+          lcd->show_info("Invalid move");
         }
         
         gameState = WAITING_PIECE_SELECTION;
@@ -216,61 +235,4 @@ void loop() {
     default:
       break;
   }
-
-  // if(selectBtn->wasPressed()){
-  //   Serial.println("TESTESTE");
-  // }
-
-  // if(state == WAITING_PIECE_SELECTION)
-  // {
-  //    lcd_print_middle(lcd, "Selecione uma peca:");
-  //    if(selectBtn->wasPressed()){
-  //      selected_piece_position = row_pos * 8 + col_pos;
-  //      Serial.println("Selected piece at row " + String(row_pos) + " column " + String(col_pos) + " - ie. index " + String(selected_piece_position));
-  //      state = WAITING_DESTINATION_SELECTION;
-  //    }
-  // }
-  // else if (state == WAITING_DESTINATION_SELECTION){
-  //   lcd_print_middle(lcd, "Selecione o destino:");
-  //   if(selectBtn->wasPressed()){
-  //      selected_destination_position = row_pos * 8 + col_pos;
-  //      Serial.println("Selected destination at row " + String(row_pos) + " column " + String(col_pos) + " - ie. index " + String(selected_destination_position));
-  //      MoveManager* moveManager = MoveManager::GetMoveManagerInstance();
-  //      int* validMoves = moveManager->validMovements(selected_piece_position);
-       
-  //      bool destinationValid = false;
-  //      for(int i = 0; i < 64; i++){
-  //       if (validMoves[i] == selected_destination_position){
-  //         destinationValid = true;
-  //         break;
-  //       }
-  //      }
-
-  //      if (destinationValid){
-  //       Serial.println("Good move!");
-  //       changePlayer();
-  //      }
-  //      else{
-  //       Serial.println("Bad move...");
-  //      }
-  //      state = WAITING_PIECE_SELECTION;
-  //    }
-  // }
-
-  // if(millis() - previousSeconds > 1000){
-  //   lcd_print_top_left(lcd, String(TimerLeft->GetRemainingTime()));
-  //   lcd_print_top_right(lcd, String(TimerRight->GetRemainingTime()));
-
-  //   previousSeconds = millis();
-  // }
-
-  // col_pos = column_encoder->getPosition();
-  // row_pos = row_encoder->getPosition();
-  
-  
-  // //Serial.println(translateIntToColumn(col_pos) + "," + translateIntToRow(row_pos));
-  // lcd_print_bottom(lcd, translateIntToColumn(col_pos) + translateIntToRow(row_pos));
-
-  // //Serial.println(ClockA->GetRemainingTime());
-
 }
