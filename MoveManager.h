@@ -38,21 +38,21 @@ public:
 		return moveManagerInstance;
 	}
 
-  int * validMovements(int row, int column);
+  int * validMovements(int row, int column,  int* validMovesArray);
 
-	int * validMovements(int from);
+	int * validMovements(int from,  int* validMovesArray);
 
-	int * validPawnMovements(int from);
+	int * validPawnMovements(int from, int* mov_array);
 
-	int * validRookMovements(int from);
+	int * validRookMovements(int from, int* mov_array);
 
-	int * validKnightMovements(int from);
+	int * validKnightMovements(int from, int* mov_array);
 
-	int * validBishopMovements(int from);
+	int * validBishopMovements(int from, int* mov_array);
 
-	int * validQueenMovements(int from);
+	int * validQueenMovements(int from, int* mov_array);
 
-    int * validKingMovements(int from);
+    int * validKingMovements(int from, int* mov_array);
 	
 	bool lookForCheck(Color color);
 };

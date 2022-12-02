@@ -3,11 +3,13 @@
 #include "Board.h"
 #include "Piece.h"
 
-int * MoveManager::validMovements(int row, int column){
-  return MoveManager::validMovements(row * 8 + column);
+#include <Arduino.h>
+
+int * MoveManager::validMovements(int row, int column, int* validMovesArray){
+  return MoveManager::validMovements(row * 8 + column, validMovesArray);
 }
 
-int * MoveManager::validMovements(int from) {
+int * MoveManager::validMovements(int from, int* validMovesArray) {
 	
 	int from_x = from % 8;
 	int from_y = from / 8;
@@ -19,44 +21,49 @@ int * MoveManager::validMovements(int from) {
 	}
 	Color color = piece->getColor();
 
-	int * movements = new int[64];
+	// initialize movements with -1.
+	for(int i = 0; i < 64; i++){
+		validMovesArray[i] = -1;
+	}
+
+  	Serial.println("Got a " + String(piece->getColor()) + " " + String(piece->getType()) + " piece");
 
 	switch (piece->getType()) {
 	case PieceType::PAWN:
-		movements = validPawnMovements(from);
+		validPawnMovements(from, validMovesArray);
 	case PieceType::ROOK:
 		/* code */
-		movements = validRookMovements(from);	
+		validRookMovements(from, validMovesArray);	
 	case PieceType::KNIGHT:
 		/* code */
-		movements = validKnightMovements(from);	
+		 validKnightMovements(from, validMovesArray);	
 	case PieceType::BISHOP:
 		/* code */
-		movements = validBishopMovements(from);	
+		validBishopMovements(from, validMovesArray);	
 	case PieceType::QUEEN:
 		/* code */
-		movements = validQueenMovements(from);	
+		validQueenMovements(from, validMovesArray);	
 	case PieceType::KING:
 		/* code */
-		movements = validKingMovements(from);	
+		validKingMovements(from, validMovesArray);	
 	default:
 		return nullptr;
 	}
 
 	for (int j = 0; j < 64; j++) {
-		int movement = movements[j];
+		int movement = validMovesArray[j];
 		//std::cout << movement << std::endl;
 		board->movePiece(from, movement);
 		if (this->lookForCheck(color)) {
-			movements[j] = -1;
+			validMovesArray[j] = -1;
 		}
 		board->movePiece(movement, from);
 	}
 
-	return movements;
+	return validMovesArray;
 }
 
-int * MoveManager::validRookMovements(int from) {
+int * MoveManager::validRookMovements(int from, int* mov_array) {
 	//std::cout << "Rook" << std::endl;
 	int from_x = from / 8;
 	int from_y = from % 8;
@@ -155,10 +162,17 @@ int * MoveManager::validRookMovements(int from) {
 	for (int j = 0; j < i; j++) {
 		//std::cout << validIndexes[j] << std::endl;
 	}
+
+	for(int i = 0; i < sizeof(validIndexes) / sizeof(int); i++){
+		if(validIndexes[i] != -1){
+			mov_array[validIndexes[i]] = 1;
+		}
+	}
+
 	return validIndexes;
 }
 
-int * MoveManager::validKnightMovements(int from) {
+int * MoveManager::validKnightMovements(int from, int* mov_array) {
 	//std::cout << "Knight" << std::endl;
 
 	int from_x = from / 8;
@@ -315,10 +329,16 @@ int * MoveManager::validKnightMovements(int from) {
 		//std::cout << validIndexes[j] << std::endl;
 	}
 
+	for(int i = 0; i < sizeof(validIndexes) / sizeof(int); i++){
+		if(validIndexes[i] != -1){
+			mov_array[validIndexes[i]] = 1;
+		}
+	}
+
 	return validIndexes;
 }
 
-int * MoveManager::validBishopMovements(int from) {
+int * MoveManager::validBishopMovements(int from, int* mov_array) {
 
 	//std::cout << "Bishop" << std::endl;
 
@@ -425,16 +445,21 @@ int * MoveManager::validBishopMovements(int from) {
 		//std::cout << validIndexes[j] << std::endl;
 	}
 
+	for(int i = 0; i < sizeof(validIndexes) / sizeof(int); i++){
+		if(validIndexes[i] != -1){
+			mov_array[validIndexes[i]] = 1;
+		}
+	}
 
 	return nullptr;
 }
 
-int * MoveManager::validQueenMovements(int from) {
+int * MoveManager::validQueenMovements(int from, int* mov_array) {
 
 	//std::cout << "Queen" << std::endl;
 
-	int * validRook = validRookMovements(from);
-	int * validBishop = validBishopMovements(from);
+	int * validRook = validRookMovements(from, mov_array);
+	int * validBishop = validBishopMovements(from, mov_array);
 
 	int validIndexes[21] = {-1, -1, -1, -1,-1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
 
@@ -453,11 +478,17 @@ int * MoveManager::validQueenMovements(int from) {
 	// 		i++;
 	// 	}
 	// }
+	
+	for(int i = 0; i < sizeof(validIndexes) / sizeof(int); i++){
+		if(validIndexes[i] != -1){
+			mov_array[validIndexes[i]] = 1;
+		}
+	}
 
 	return validIndexes;
 }
 
-int * MoveManager::validKingMovements(int from) {
+int * MoveManager::validKingMovements(int from, int* mov_array) {
 
 	if (this->board->tiles[from]->getOccupiedBy() == nullptr) {
 		return nullptr;
@@ -549,10 +580,17 @@ int * MoveManager::validKingMovements(int from) {
 			i++;
 		}
 	} 
+
+	for(int i = 0; i < sizeof(validIndexes) / sizeof(int); i++){
+		if(validIndexes[i] != -1){
+			mov_array[validIndexes[i]] = 1;
+		}
+	}
+
 	return validIndexes;
 }
 
-int * MoveManager::validPawnMovements(int from) {
+int * MoveManager::validPawnMovements(int from, int* mov_array) {
 	int from_x = from / 8;
 	int from_y = from % 8;
 
@@ -628,6 +666,13 @@ int * MoveManager::validPawnMovements(int from) {
 	for (int i = 0; i < 4; i++) {
         //std::cout << validIndexes[i] << std::endl;
     }
+
+	for(int i = 0; i < sizeof(validIndexes) / sizeof(int); i++){
+		if(validIndexes[i] != -1){
+			mov_array[validIndexes[i]] = 1;
+		}
+	}
+
 	return validIndexes;
 }
 
@@ -658,7 +703,8 @@ bool MoveManager::lookForCheck(Color color) {
 	for (int j = 0; j < 64; j++) {
 		if (board->tiles[j]->getOccupiedBy() != nullptr) {
 			if (board->tiles[j]->getOccupiedBy()->getColor() != kingColor) {
-				int * movements = validMovements(j); 
+				int * movements;
+				validMovements(j, movements); 
 				for (int k = 0; k < 21; k++) {
 					if (movements[k] == kingPosition) {
 						return true;
