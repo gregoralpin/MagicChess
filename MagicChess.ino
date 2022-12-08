@@ -3,6 +3,7 @@
 #include <GFButton.h>
 #include "CountdownTimer.h"
 #include "MoveManager.h"
+#include "LedControl.h"
 
 // void MovePeça(int piece_pos, int desitination){
 //  if(Board->IsOccupied(destination){
@@ -43,6 +44,7 @@ ChessDisplay *lcd = nullptr;
 GFButton *selectBtn = nullptr;
 CountdownTimer *TimerLeft = nullptr;
 CountdownTimer *TimerRight = nullptr;
+LEDControl *ledControl = nullptr;
 
 long lastTimerUpdateSeconds;
 long lastInfoClearSeconds;
@@ -65,6 +67,7 @@ void init_control(){
   lcd = new ChessDisplay(8, 9, 10, 11, 12, 13); // LiquidCrystal(rs,en,d4,d5,d6,d7);
   lcd->begin(20, 4);
   selectBtn = new GFButton(6);
+  ledControl = new LEDControl(84);
 }
 
 /************************************/
@@ -152,7 +155,7 @@ void loop() {
     col_pos = encoder_pos_to_game_pos(column_encoder->getPosition());
 
     // Acende led das casa cuja posicao é (row_pos, col_pos).
-    // LedController->TurnLedOn(x, y, CRBGD::WHITE);
+    ledControl->ShowHouseSelection(row_pos, col_pos);
 
     // Print encoder values.
     lcd->print_bottom(game_pos_to_row_pos(row_pos) + game_pos_to_column_pos(col_pos));
@@ -216,7 +219,7 @@ void loop() {
         moveManager->validMovements(selected_piece_position, validMoves);
 
         // Acende led das casas validas.
-        //LedController->TurnLedsOn(validMovementsList, color);
+        ledControl->ShowPossibleMoves(validMoves);
         
         gameState = WAITING_DESTINATION_SELECTION;
       }
@@ -243,9 +246,6 @@ void loop() {
           lcd->clear_info();
           lastInfoClearSeconds = millis();
           lcd->show_info("Piece moved!");
-
-          // Apaga todos os leds.
-          // LedController->TurnLedsOff(validMovements);
         }
         else{
           Serial.println("Bad move...");
@@ -254,6 +254,9 @@ void loop() {
           lastInfoClearSeconds = millis();
           lcd->show_info("Invalid move");
         }
+        
+        // Apaga todos os leds.
+        ledControl->TurnEverythingOff();
         
         gameState = WAITING_PIECE_SELECTION;
       }
@@ -268,7 +271,7 @@ void loop() {
       
       // Check who is the winner.
       String winner;
-      if(gameState == WAITING_LEFT_PLAYER){
+      if(playerState == WAITING_LEFT_PLAYER){
         winner = "Whites";
       }
       else{
