@@ -4,13 +4,25 @@
 #include "CountdownTimer.h"
 #include "MoveManager.h"
 
+// void MovePeça(int piece_pos, int desitination){
+//  if(Board->IsOccupied(destination){
+//    int* path = Mover->GetPathToCemitery(destination);
+//    MotorControl->ExecutePath(path);  
+//  }
+//  
+//  int* path = Mover->GetPath(piece_pos, destination)
+//  MotorControl->ExecutePath(path);
+//  Board[]
+//}
+
 /***** CONTROL STATES *****/
 
 enum GameState {
-  GAME_START,
+  GAME_STARTING,
   WAITING_PIECE_SELECTION,
   WAITING_DESTINATION_SELECTION,
-  GAME_END
+  GAME_ENDING,
+  GAME_ENDED
 };
 
 enum PlayerState {
@@ -38,13 +50,14 @@ int selected_piece_position;
 int selected_destination_position;
 int col_pos;
 int row_pos;
+int *validMoves = nullptr;
 
 /***********************************/
 
 /***** CONTROL VAR INSTANTIATION *****/
 
 void init_control(){
-  gameState = GAME_START;
+  gameState = GAME_STARTING;
   playerState = WAITING_LEFT_PLAYER;
 
   row_encoder = new RotaryEncoder(2,3);
@@ -52,15 +65,6 @@ void init_control(){
   lcd = new ChessDisplay(8, 9, 10, 11, 12, 13); // LiquidCrystal(rs,en,d4,d5,d6,d7);
   lcd->begin(20, 4);
   selectBtn = new GFButton(6);
-  TimerLeft = new CountdownTimer(60 * 3);
-  TimerRight = new CountdownTimer(60 * 3);
-  
-  lastTimerUpdateSeconds = millis();
-  lastInfoClearSeconds = millis();
-  selected_destination_position = 0; // [0..63]
-  selected_destination_position = 0; // [0..63]
-  col_pos = 0; // [0..7]
-  row_pos = 0; // [0..7]
 }
 
 /************************************/
@@ -136,11 +140,19 @@ void setup() {
 void loop() {
 
   // Update lcd values on every iteration while game is runnnig.
-  if (gameState != GAME_END || gameState != GAME_START){
+  if (gameState != GAME_ENDING && gameState != GAME_STARTING && gameState != GAME_ENDED){
+
+    // Check timers to see if game has ended
+    if(TimerLeft->GetRemainingSeconds() == 0 || TimerRight->GetRemainingSeconds() == 0){
+      gameState = GAME_ENDING;
+    }
     
     // Get row and pos position
     row_pos = encoder_pos_to_game_pos(row_encoder->getPosition());
     col_pos = encoder_pos_to_game_pos(column_encoder->getPosition());
+
+    // Acende led das casa cuja posicao é (row_pos, col_pos).
+    // LedController->TurnLedOn(x, y, CRBGD::WHITE);
 
     // Print encoder values.
     lcd->print_bottom(game_pos_to_row_pos(row_pos) + game_pos_to_column_pos(col_pos));
@@ -165,7 +177,19 @@ void loop() {
 
   switch (gameState)
   {
-    case GAME_START:
+    case GAME_STARTING:
+
+      // Init vars.      
+      TimerLeft = new CountdownTimer(10);
+      TimerRight = new CountdownTimer(60 * 3);
+      
+      lastTimerUpdateSeconds = millis();
+      lastInfoClearSeconds = millis();
+      selected_destination_position = 0; // [0..63]
+      selected_destination_position = 0; // [0..63]
+      col_pos = 0; // [0..7]
+      row_pos = 0; // [0..7]
+    
       lcd->print_top_left(TimerLeft->GetRemainingTime());
       lcd->print_top_right(TimerRight->GetRemainingTime());
       lcd->show_left_turn_indicator();
@@ -176,6 +200,8 @@ void loop() {
 
       playerState = WAITING_LEFT_PLAYER;
       gameState = WAITING_PIECE_SELECTION;
+
+      validMoves = new int[64];
       break;
 
     case WAITING_PIECE_SELECTION:
@@ -184,6 +210,14 @@ void loop() {
       if(selectBtn->wasPressed()){
         selected_piece_position = row_pos * 8 + col_pos;
         Serial.println("Selected piece at row " + String(row_pos) + " column " + String(col_pos) + " - ie. index " + String(selected_piece_position));
+        
+        // Get valid movements for selected piece.
+        MoveManager* moveManager = MoveManager::GetMoveManagerInstance(); // this line should be outside of loop
+        moveManager->validMovements(selected_piece_position, validMoves);
+
+        // Acende led das casas validas.
+        //LedController->TurnLedsOn(validMovementsList, color);
+        
         gameState = WAITING_DESTINATION_SELECTION;
       }
       break;
@@ -194,18 +228,14 @@ void loop() {
       if(selectBtn->wasPressed()){
         selected_destination_position = row_pos * 8 + col_pos;
         Serial.println("Selected destination at row " + String(row_pos) + " column " + String(col_pos) + " - ie. index " + String(selected_destination_position));
-        
-        MoveManager* moveManager = MoveManager::GetMoveManagerInstance(); // this line should be outside of loop
-        int* validMoves = new int[64];
-        moveManager->validMovements(selected_piece_position, validMoves);
 
         Serial.println("Got valid moves:");
         for(int i = 0; i < 64; i++){
           Serial.print(String(validMoves[i]) + ", ");
         }
         Serial.println();
-        
-        bool destinationValid = false;
+
+        // Check if selected destination is valid in valid movements
         if(validMoves[selected_destination_position] != -1){
           Serial.println("Good move!");
           changePlayerTurn();
@@ -213,6 +243,9 @@ void loop() {
           lcd->clear_info();
           lastInfoClearSeconds = millis();
           lcd->show_info("Piece moved!");
+
+          // Apaga todos os leds.
+          // LedController->TurnLedsOff(validMovements);
         }
         else{
           Serial.println("Bad move...");
@@ -226,10 +259,31 @@ void loop() {
       }
       break;
 
-    case GAME_END:
+    case GAME_ENDING:
       lcd->clear();
-      lcd->print_middle("Game over");
-      lcd->print_bottom("Player ? has won!");
+      gameState = GAME_ENDED;
+      break;
+      
+    case GAME_ENDED:
+      
+      // Check who is the winner.
+      String winner;
+      if(gameState == WAITING_LEFT_PLAYER){
+        winner = "Whites";
+      }
+      else{
+        winner = "Blacks";
+      }
+
+      lcd->show_info("Game over");
+      lcd->print_middle(winner + " have won!");
+      lcd->print_bottom("Press btn to restart");
+
+      if(selectBtn->wasPressed()){
+        gameState = GAME_STARTING;
+        lcd->clear();
+      }
+      
       break;
 
     default:
