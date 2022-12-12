@@ -3,11 +3,14 @@
 #include "LedControl.h"
 
 #define DATA_PIN 2;
+#define NUM_LEDS 84;
 
-LEDControl::LEDControl(int numLeds){
-  NumLeds = numLeds;
-  leds = new CRGB[numLeds];
-  FastLED.addLeds<WS2812B, DATA_PIN, 1, EOrder::RGB>(leds, NumLeds) //@Greg, nao consegui fazer essa linha funcionar.
+CRGB leds[NUM_LEDS];
+
+LEDControl::LEDControl(){
+  FastLED.addLeds<WS2812B, DATA_PIN, GRB>(leds, NUM_LEDS); //@Greg, nao consegui fazer essa linha funcionar.
+  FastLED.setBrightness(90);
+  
   lastHouseLedLitIndex = 0;
 }
 
